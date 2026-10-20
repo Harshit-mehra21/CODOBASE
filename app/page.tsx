@@ -3445,7 +3445,7 @@ export default function CodeBasePlatform() {
                   defaultValue={currentUser.githubUsername}
                   onChange={(e) => setEditGithub(e.target.value)}
                   className={`w-full px-3 py-2 rounded-xl border font-mono ${
-                    isDarkMode ? "bg-slate-950 border-white/[0.08] text-slate-200" : "bg-slate-50 border-slate-300 text-slate-800"
+                    isDarkMode ? "bg-slate-950 border-white/8 text-slate-200" : "bg-slate-50 border-slate-300 text-slate-800"
                   }`}
                 />
               </div>
@@ -3491,10 +3491,10 @@ export default function CodeBasePlatform() {
       {showCreateRoomModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
           <div className={`w-full max-w-md rounded-3xl border p-6 shadow-2xl space-y-4 text-xs ${
-            isDarkMode ? "bg-slate-900 border-white/[0.08]" : "bg-white border-slate-200"
+            isDarkMode ? "bg-slate-900 border-white/8" : "bg-white border-slate-200"
           }`}>
             <div className={`flex items-center justify-between border-b pb-3 ${
-              isDarkMode ? "border-white/[0.08]" : "border-slate-200"
+              isDarkMode ? "border-white/9" : "border-slate-200"
             }`}>
               <h3 className="text-base font-bold">Create Room (20 Max Capacity)</h3>
               <button onClick={() => setShowCreateRoomModal(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white">✕</button>
