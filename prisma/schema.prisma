@@ -1,0 +1,122 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                String       @id @default(cuid())
+  name              String
+  email             String       @unique
+  passwordHash      String
+  avatar            String?
+  country           String       @default("🇮🇳 India")
+  role              String       @default("Full-Stack Developer")
+  bio               String?      @default("Building next-gen systems on CODOBASE.")
+  contributionScore Int          @default(500)
+  githubUrl         String?
+  linkedinUrl       String?
+  leetcodeUrl       String?
+  createdAt         DateTime     @default(now())
+
+  createdRooms      Room[]       @relation("CreatedRooms")
+  memberships       RoomMember[]
+  messages          ChatMessage[]
+  goals             Goal[]
+  executionLogs     ExecutionLog[]
+}
+
+model Room {
+  id            String         @id @default(cuid())
+  name          String
+  category      String         @default("coding") // "coding", "gaming", "explore"
+  subdomain     String         @default("Web & AI")
+  description   String
+  healthScore   Int            @default(82)
+  maxMembers    Int            @default(25)
+  isPrivate     Boolean        @default(false)
+  createdById   String
+  createdBy     User           @relation("CreatedRooms", fields: [createdById], references: [id], onDelete: Cascade)
+  createdAt     DateTime       @default(now())
+
+  members       RoomMember[]
+  files         ProjectFile[]
+  messages      ChatMessage[]
+  executionLogs ExecutionLog[]
+}
+
+model RoomMember {
+  id           String   @id @default(cuid())
+  roomId       String
+  userId       String
+  role         String   @default("collaborator") // "owner", "editor", "viewer"
+  joinedAt     DateTime @default(now())
+  lastActiveAt DateTime @default(now())
+
+  room         Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, userId])
+}
+
+model ProjectFile {
+  id        String   @id @default(cuid())
+  roomId    String
+  path      String
+  name      String
+  content   String
+  language  String   @default("typescript")
+  updatedAt DateTime @updatedAt
+
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, path])
+}
+
+model ChatMessage {
+  id          String   @id @default(cuid())
+  roomId      String
+  userId      String?
+  senderName  String   @default("Anonymous")
+  avatar      String?
+  country     String   @default("Global")
+  role        String   @default("Collaborator")
+  text        String
+  codeSnippet String?
+  isAI        Boolean  @default(false)
+  aiMode      String?
+  createdAt   DateTime @default(now())
+
+  room        Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model ExecutionLog {
+  id         String   @id @default(cuid())
+  roomId     String
+  userId     String?
+  filePath   String
+  language   String
+  output     String
+  status     String   @default("SUCCESS") // "SUCCESS" | "ERROR"
+  durationMs Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  room       Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model Goal {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  progress  Int      @default(0)
+  category  String   @default("Project")
+  deadline  String?
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
